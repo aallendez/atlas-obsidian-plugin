@@ -1,0 +1,58 @@
+.atlas-suggestion {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 4px 0;
+}
+
+.atlas-entity-type {
+	font-size: 0.7em;
+	padding: 2px 6px;
+	border-radius: 4px;
+	font-weight: 600;
+	text-transform: uppercase;
+	flex-shrink: 0;
+}
+
+
+.atlas-entity-name {
+	font-weight: 600;
+}
+
+.atlas-entity-desc {
+	color: var(--text-muted);
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+/* Atlas mention links — live preview */
+.atlas-mention .cm-underline {
+	text-decoration: none !important;
+	font-weight: 700 !important;
+	cursor: default;
+}
+
+/* Atlas mention links — reading mode */
+a[href^="atlas:"] {
+	text-decoration: none !important;
+	font-weight: 700 !important;
+	cursor: default;
+}
+
+/* Atlas entity blocks in frontmatter properties */
+.atlas-entities-list {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.atlas-entity-block {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 4px 8px;
+	border-radius: 6px;
+	background-color: var(--background-secondary);
+}
