@@ -1,5 +1,5 @@
 import {Client} from "@modelcontextprotocol/sdk/client/index.js";
-import {SSEClientTransport} from "@modelcontextprotocol/sdk/client/sse.js";
+import {StreamableHTTPClientTransport} from "@modelcontextprotocol/sdk/client/streamableHttp.js";
 import type {Entity} from "./types";
 
 export class AtlasClient {
@@ -18,7 +18,7 @@ export class AtlasClient {
 
 	private async _connect(): Promise<void> {
 		try {
-			const url = `${this.getServerUrl()}/sse`;
+			const url = this.getServerUrl();
 			console.log("Atlas: connecting to", url);
 
 			this.client = new Client(
@@ -26,8 +26,19 @@ export class AtlasClient {
 				{capabilities: {}},
 			);
 
-			const transport = new SSEClientTransport(
+			const transport = new StreamableHTTPClientTransport(
 				new URL(url),
+				{
+					// Intercept GET requests: return 405 so the SDK skips the
+					// optional SSE listener instead of failing on servers that
+					// return 400 for unsupported methods.
+					fetch: async (url, init) => {
+						if (init?.method === "GET") {
+							return new Response(null, {status: 405});
+						}
+						return fetch(url, init);
+					},
+				},
 			);
 
 			await this.client.connect(transport);
@@ -72,7 +83,7 @@ export class AtlasClient {
 			const contentItems = result.content as Array<{type: string; text: string}>;
 			if (!contentItems?.length) return [];
 
-			const allowedTypes = new Set<string>(types ?? ["Person", "Company"]);
+			const allowedTypes = types ? new Set<string>(types) : null;
 			const entities: Entity[] = [];
 
 			for (const item of contentItems) {
@@ -82,7 +93,7 @@ export class AtlasClient {
 						entity: {id: string; name: string; description?: string; labels: string[]};
 						score: number;
 					};
-					const matchedType = parsed.entity.labels.find(l => allowedTypes.has(l));
+					const matchedType = parsed.entity.labels.find(l => !allowedTypes || allowedTypes.has(l));
 					if (matchedType) {
 						entities.push({
 							id: parsed.entity.id,

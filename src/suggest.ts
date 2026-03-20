@@ -58,7 +58,8 @@ export class EntitySuggest extends EditorSuggest<Entity> {
 
 		return new Promise<Entity[]>((resolve) => {
 			this.debounceTimer = setTimeout(async () => {
-				const entities = await this.atlasClient.searchEntities(context.query);
+				const types = this.getSettings().entityTypes.map(t => t.name);
+				const entities = await this.atlasClient.searchEntities(context.query, types);
 				resolve(entities);
 			}, this.getSettings().debounceMs);
 		});

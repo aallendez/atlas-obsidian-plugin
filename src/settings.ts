@@ -16,7 +16,7 @@ export const DEFAULT_ENTITY_TYPES: EntityTypeConfig[] = [
 ];
 
 export const DEFAULT_SETTINGS: AtlasSettings = {
-	atlasServerUrl: "http://localhost:3001",
+	atlasServerUrl: "http://localhost:3001/mcp",
 	debounceMs: 300,
 	entityTypes: DEFAULT_ENTITY_TYPES,
 };
@@ -35,9 +35,9 @@ export class AtlasSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName("Knowledge Graph server URL")
-			.setDesc("URL of the Knowledge Graph MCP server (e.g. http://localhost:3001)")
+			.setDesc("Full URL of the Knowledge Graph MCP endpoint (e.g. http://localhost:3001/mcp)")
 			.addText(text => text
-				.setPlaceholder("http://localhost:3001")
+				.setPlaceholder("http://localhost:3001/mcp")
 				.setValue(this.plugin.settings.atlasServerUrl)
 				.onChange(async (value) => {
 					this.plugin.settings.atlasServerUrl = value.replace(/\/+$/, "");

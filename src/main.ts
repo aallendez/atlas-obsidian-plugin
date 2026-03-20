@@ -108,6 +108,12 @@ export default class AtlasPlugin extends Plugin {
 
 	async loadSettings() {
 		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+		// Ensure the URL includes the /mcp path
+		const url = new URL(this.settings.atlasServerUrl);
+		if (url.pathname === "/") {
+			url.pathname = "/mcp";
+			this.settings.atlasServerUrl = url.toString().replace(/\/$/, "");
+		}
 		// Ensure entityTypes exists for users upgrading from older settings
 		if (!this.settings.entityTypes) {
 			this.settings.entityTypes = DEFAULT_SETTINGS.entityTypes;
